@@ -4,6 +4,14 @@ import java.sql.*;
 
 public class SQL {
     static Connection con = null;
+    
+    public void Setup(){
+        RegisterDriver();
+        Connect();
+        GetAllData();
+        RegisterUser("Kill","Bill");
+    }
+    
     static void RegisterDriver(){
         try{
             Class.forName("com.mysql.jdbc.Driver");
@@ -12,14 +20,29 @@ public class SQL {
         }
     }
     
-    static boolean Login(String Username,String HashedPassword){
+    static void WipeUserTable(){
+        PreparedStatement stmt = null;
+        try {
+            String SQL = "DELETE FROM Users";
+            stmt = con.prepareStatement(SQL);
+            stmt.execute();
+            
+            System.out.println("Deleted all data!");
+        }
+        catch (SQLException e) {
+            System.out.println("Error Deleting!" + e);
+        }
+    }
+    
+    public static boolean Login(String Username,String HashedPassword){
         Statement stmt = null;
         try {
             stmt = con.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-            String SQL = String.format("SELECT Username,Password FROM Users WHERE Username = ",Username);
+            String SQL = String.format("SELECT Username,Password FROM Users WHERE Username = '%s'",Username);
             ResultSet rs = stmt.executeQuery(SQL);
             rs.first();
             System.out.println(rs.getString("Username")); 
+            System.out.println(rs.getString("Password"));
             if(rs.getString("Password").equals(HashedPassword)){
                stmt.close();
                return true;
@@ -35,7 +58,7 @@ public class SQL {
         }
     }
     
-    static void Connect(){
+    public static void Connect(){
         RegisterDriver();
         String URL = "jdbc:mysql://mydbinstance.c2j94hxi2irl.eu-west-2.rds.amazonaws.com:3306";
         String User = "wicked";
@@ -49,7 +72,7 @@ public class SQL {
     }
     
     //Development Only
-    static void GetAllData(){
+    public static void GetAllData(){
         Statement stmt = null;
         try {
             stmt = con.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
@@ -60,7 +83,7 @@ public class SQL {
             rs.beforeFirst();
             for(int X=0;X<LastRow;X++){
                 rs.next();
-                System.out.println(String.format("Row %s:%2s",X,rs.getString("Username")));
+                System.out.println(String.format("Row %s:%2s,%3s",X,rs.getString("Username"),rs.getString("Password")));
             }
         }
         catch (Exception e) {
@@ -70,10 +93,11 @@ public class SQL {
         }
     }
     
-    static void RegisterUser(String Username,String HashedPassword){
+    public static void RegisterUser(String Username,String HashedPassword){
         PreparedStatement stmt = null;
         try {
-            String SQL = String.format("INSERT INTO Users(Username,Password) VALUES('%s','$2d')",Username,HashedPassword);
+            String SQL = String.format("INSERT INTO Users(Username,Password) VALUES('%s','%2s')",Username,HashedPassword);
+            System.out.println(SQL);
             String SQLSelect = "USE Users";
             stmt = con.prepareStatement(SQLSelect);
             stmt.execute();
@@ -89,7 +113,7 @@ public class SQL {
         GetAllData();
     }
     
-    static void CreateTable(){
+    public static void CreateTable(){
         PreparedStatement stmt = null;
         try {
             String SQL = "CREATE TABLE Users(UserID int,Username varchar(255),Password varchar(255));";

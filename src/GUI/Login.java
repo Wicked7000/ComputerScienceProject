@@ -12,13 +12,44 @@ import javafx.stage.Stage;
 import javafx.scene.text.*;
 import javafx.scene.control.*;
 import javafx.geometry.Insets;
+import Core.Register;
+import Core.SQL;
+import javafx.*;
+import javafx.scene.control.Alert.AlertType;
 
 public class Login extends Application {
     
     public Scene LoginScene = null;
+    public static SQL Instance = null;
     
     public static void main(String[] args) {
+        Instance = new SQL();
+        Instance.Setup();
         launch(args);
+    }
+    
+    static boolean ValidationLink(TextField UsernameOBJ,PasswordField Pass1,PasswordField Pass2){
+        Alert alert = new Alert(AlertType.INFORMATION);
+        if(Register.CheckUsername(UsernameOBJ.getText()) == 1){
+            if(Register.CheckPassword(Pass1.getText(), Pass2.getText()) == 1){
+                SQL.RegisterUser(UsernameOBJ.getText(), Pass1.getText());
+                alert.setContentText("Signed up!");
+                alert.setHeaderText(null);
+                alert.showAndWait();
+                return true;
+            }
+            else{
+                alert.setContentText("Validation Failed");
+                alert.setHeaderText("Ensure your password is between 7-13 characters and has atleast 1 Number and 1 Special Character");
+                alert.showAndWait();
+                return false;
+            }
+        }else{
+            alert.setContentText("Validation Failed");
+            alert.setHeaderText("Ensure your username is between 5-12 Characters including numbers and does not include any special characters or spaces");
+            alert.showAndWait();
+            return false;
+        }
     }
     
     public void RegisterStage(Stage primaryStage){
@@ -61,6 +92,14 @@ public class Login extends Application {
         });
         
         Button SubmitData = new Button("Sign-up");
+        SubmitData.setOnAction(new EventHandler<ActionEvent>(){
+            @Override public void handle(ActionEvent e){
+                if(ValidationLink(Username,passwordField,passwordField2) == true){
+                    primaryStage.setScene(LoginScene);
+                    primaryStage.setTitle("Login");
+                }
+            }
+        });
         SubmitVbox.getChildren().addAll(SubmitData,Login);
         SubmitVbox.setPadding(new Insets(50,0,0,0));
         SubmitVbox.setSpacing(9);
@@ -116,6 +155,23 @@ public class Login extends Application {
         });
         
         Button SubmitData = new Button("Log-in");
+        
+        SubmitData.setOnAction(new EventHandler<ActionEvent>(){
+            @Override public void handle(ActionEvent e){
+                boolean LoggedIn = Instance.Login(Username.getText(),passwordField.getText());
+                Alert alert  = new Alert(AlertType.INFORMATION);
+                if(LoggedIn == true){
+                    alert.setContentText("Logged In!");
+                    alert.setHeaderText(null);
+                    alert.showAndWait();
+                }else{
+                    alert.setContentText("Logged Failed!");
+                    alert.setHeaderText("Please check your username and password");
+                    alert.showAndWait();
+                }
+            }
+        });
+        
         SubmitVbox.getChildren().addAll(SubmitData,Register);
         SubmitVbox.setPadding(new Insets(50,0,0,0));
         SubmitVbox.setSpacing(9);
