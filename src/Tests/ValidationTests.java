@@ -16,4 +16,16 @@ public class ValidationTests {
         }
     }
     
+    String[][] TestPasswords = new String[][]{{"SamPass","SamPass"},{"HelloWorld5346","HelloWorld5346"},{"Workedpass!","Workedpass!"},{"nocapital","nocapital"},{"aaabbbF!ioasdr","aaabbbF!ioasdr"},{"donotMatch!","match!Dat"}};
+    int[] ExpectedResultsPass = new int[]{-1,-1,1,-1,-1,-1};
+    
+    @Test
+    public void PasswordChecks(){
+        for(int X=0;X<TestPasswords.length;X++){
+            int Result = Register.CheckPassword(TestPasswords[X][0], TestPasswords[X][1]);
+            assertEquals("Error Occured input:" + TestPasswords[X][0]+":"+TestPasswords[X][1],ExpectedResultsPass[X],Result);
+        }
+
+    }
+    
 }

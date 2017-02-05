@@ -48,17 +48,15 @@ public class Register {
 	}
   
   	//Checks if both passwords match and if it includes a special character
-  	public static int CheckPassword(String Pass1,String Pass2){      
-            
-            
+  	public static int CheckPassword(String Pass1,String Pass2){             
             if(Pass1.equals(Pass2) && (Pass1.length() < 13 && Pass1.length() > 7)){
-      		Pattern pattern = Pattern.compile("(\\w*)");
+      		Pattern pattern = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
                 Pattern CapitalLetters = Pattern.compile("([A-Z])");
                 
           	Matcher matcher = pattern.matcher(Pass1);
                 
                 //Check for special Characters
-          	if(matcher.matches() == true){
+          	if(matcher.find() == true){
                     Matcher Capital = CapitalLetters.matcher(Pass1);
                     //Check for capital Letters
                     if(Capital.find() == true){

@@ -1,12 +1,20 @@
 package Core;
 
+import Core.Leitner.Deck;
 import java.util.*;
 import java.nio.file.*;
 import java.nio.charset.Charset;
 import java.io.IOException;
 
 public class FileSaver{
-  static void CreateFile(Core.Deck TheDeck){
+  public static void main(String[] args){
+      Deck TestDeck = new Deck();
+      TestDeck.Boxes[0].AddQuestion("Test123", "TestingThisFileSaver");
+      TestDeck.Boxes[1].AddQuestion("ThisIsInBox2", "Box2Save");
+      CreateFile(TestDeck);
+  }
+    
+  public static void CreateFile(Core.Leitner.Deck TheDeck){
         List<String> XMLFileLines = new ArrayList<String>();
   	XMLFileLines.add("<deck>");
   	System.out.println(TheDeck.Boxes.length);

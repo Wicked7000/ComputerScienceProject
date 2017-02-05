@@ -6,12 +6,18 @@ import org.junit.runner.notification.Failure;
 
 public class JUnitRunner {
     public static void main(String[] args){
-        Result result = JUnitCore.runClasses(ValidationTests.class);
+        runClass(ValidationTests.class,"Validation Tests:");
+        runClass(LeitnerTests.class,"LeitnerTests");
+    }
+    
+    public static void runClass(Class Class,String Type){
+        System.out.print(Type);
+        Result result = JUnitCore.runClasses(Class);
         
         for(Failure failure : result.getFailures()){
-            System.out.println(failure.toString());
+            System.out.println("fail: " + failure.toString());
         }
         
-        System.out.println(result.wasSuccessful());
+        System.out.println("Passed?:" +result.wasSuccessful());
     }
 }
