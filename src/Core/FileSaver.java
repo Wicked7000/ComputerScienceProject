@@ -35,7 +35,8 @@ public class FileSaver{
     	}
     	XMLFileLines.add("</deck>");
         
-        Path file = Paths.get("test.xml");
+        System.out.print(System.getenv("LOCALAPPDATA") + "\\test.xml");
+        Path file = Paths.get(System.getenv("LOCALAPPDATA") + "\\test.xml");
         try{
             Files.write(file,XMLFileLines,Charset.forName("UTF-8"));
             System.out.println("File Created");

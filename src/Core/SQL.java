@@ -1,6 +1,7 @@
 package Core;
 
 import java.sql.*;
+import java.util.Arrays;
 
 public class SQL {
     static Connection con = null;
@@ -9,7 +10,6 @@ public class SQL {
         RegisterDriver();
         Connect();
         GetAllData();
-        RegisterUser("Kill","Bill");
     }
     
     static void RegisterDriver(){
@@ -23,7 +23,7 @@ public class SQL {
     static void WipeUserTable(){
         PreparedStatement stmt = null;
         try {
-            String SQL = "DELETE FROM Users";
+            String SQL = "DROP TABLE Users";
             stmt = con.prepareStatement(SQL);
             stmt.execute();
             
@@ -34,16 +34,14 @@ public class SQL {
         }
     }
     
-    public static boolean Login(String Username,String HashedPassword){
+    public static boolean Login(String Username,byte[] HashedPassword){
         Statement stmt = null;
         try {
             stmt = con.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
             String SQL = String.format("SELECT Username,Password FROM Users WHERE Username = '%s'",Username);
             ResultSet rs = stmt.executeQuery(SQL);
             rs.first();
-            System.out.println(rs.getString("Username")); 
-            System.out.println(rs.getString("Password"));
-            if(rs.getString("Password").equals(HashedPassword)){
+            if(Arrays.equals(rs.getBytes("Password"),HashedPassword)){
                stmt.close();
                return true;
             }
@@ -93,16 +91,17 @@ public class SQL {
         }
     }
     
-    public static void RegisterUser(String Username,String HashedPassword){
+    public static void RegisterUser(String Username,byte[] HashedPassword){
         PreparedStatement stmt = null;
         try {
-            String SQL = String.format("INSERT INTO Users(Username,Password) VALUES('%s','%2s')",Username,HashedPassword);
+            String SQL = String.format("INSERT INTO Users(Username,Password) VALUES('%s',?)",Username);
             System.out.println(SQL);
             String SQLSelect = "USE Users";
             stmt = con.prepareStatement(SQLSelect);
             stmt.execute();
             
             stmt = con.prepareStatement(SQL);
+            stmt.setBytes(1, HashedPassword);
             stmt.execute();
         }
         catch (SQLException e) {
@@ -116,7 +115,7 @@ public class SQL {
     public static void CreateTable(){
         PreparedStatement stmt = null;
         try {
-            String SQL = "CREATE TABLE Users(UserID int,Username varchar(255),Password varchar(255));";
+            String SQL = "CREATE TABLE Users(UserID int,Username varchar(255),Password VARBINARY(255));";
             String SQLSelect = "USE Users";
             stmt = con.prepareStatement(SQLSelect);
             stmt.execute();

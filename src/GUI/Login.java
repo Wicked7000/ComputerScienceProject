@@ -14,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.geometry.Insets;
 import Core.Register;
 import Core.SQL;
+import GUI.Main;
 import javafx.*;
 import javafx.scene.control.Alert.AlertType;
 
@@ -32,7 +33,7 @@ public class Login extends Application {
         Alert alert = new Alert(AlertType.INFORMATION);
         if(Register.CheckUsername(UsernameOBJ.getText()) == 1){
             if(Register.CheckPassword(Pass1.getText(), Pass2.getText()) == 1){
-                SQL.RegisterUser(UsernameOBJ.getText(), Pass1.getText());
+                SQL.RegisterUser(UsernameOBJ.getText(), Register.HashPassword(Pass1.getText()));
                 alert.setContentText("Signed up!");
                 alert.setHeaderText(null);
                 alert.showAndWait();
@@ -146,9 +147,9 @@ public class Login extends Application {
         //Again create a new Vbox to allow for the seperation of elements
         VBox SubmitVbox = new VBox();
         SubmitVbox.setAlignment(Pos.CENTER);
-        Button Register = new Button("Don't have an account?");
+        Button RegisterButton = new Button("Don't have an account?");
         
-        Register.setOnAction(new EventHandler<ActionEvent>(){
+        RegisterButton.setOnAction(new EventHandler<ActionEvent>(){
             @Override public void handle(ActionEvent e){
                 RegisterStage(primaryStage);
             }
@@ -158,12 +159,13 @@ public class Login extends Application {
         
         SubmitData.setOnAction(new EventHandler<ActionEvent>(){
             @Override public void handle(ActionEvent e){
-                boolean LoggedIn = Instance.Login(Username.getText(),passwordField.getText());
+                boolean LoggedIn = Instance.Login(Username.getText(),Register.HashPassword(passwordField.getText()));
                 Alert alert  = new Alert(AlertType.INFORMATION);
                 if(LoggedIn == true){
                     alert.setContentText("Logged In!");
                     alert.setHeaderText(null);
                     alert.showAndWait();
+                    Main.StartMainStage(primaryStage);
                 }else{
                     alert.setContentText("Logged Failed!");
                     alert.setHeaderText("Please check your username and password");
@@ -172,7 +174,7 @@ public class Login extends Application {
             }
         });
         
-        SubmitVbox.getChildren().addAll(SubmitData,Register);
+        SubmitVbox.getChildren().addAll(SubmitData,RegisterButton);
         SubmitVbox.setPadding(new Insets(50,0,0,0));
         SubmitVbox.setSpacing(9);
         

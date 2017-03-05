@@ -1,15 +1,11 @@
 <deck>
 <Box0>
 <Card>
-<Question>Test123</Question>
-<Answer>TestingThisFileSaver</Answer>
+<Question>Unit from sun to earth?</Question>
+<Answer>AU</Answer>
 </Card>
 </Box0>
 <Box1>
-<Card>
-<Question>ThisIsInBox2</Question>
-<Answer>Box2Save</Answer>
-</Card>
 </Box1>
 <Box2>
 </Box2>

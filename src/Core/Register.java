@@ -16,7 +16,7 @@ public class Register {
             String Username = reader.nextLine();
   	}
         
-        public static String HashPassword(String Password){
+        public static byte[] HashPassword(String Password){
             MessageDigest messageDigest = null;
             try{
                 messageDigest = MessageDigest.getInstance("SHA-256");
@@ -24,8 +24,8 @@ public class Register {
                 System.out.println("No Algo");
             }
             messageDigest.update(Password.getBytes());
-            String encryptedString = new String(messageDigest.digest());
-            return encryptedString;
+            byte[] BytesHash = messageDigest.digest();
+            return BytesHash;
         }
   
   	//This checks a vaild username
