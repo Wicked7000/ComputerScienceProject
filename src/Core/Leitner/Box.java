@@ -20,6 +20,9 @@ public class Box {
     }
 
     public void AddQuestionHolder(Holder Question){
+        if (Questions == null) {
+            Questions = new ArrayList<Holder>();
+        }
         Questions.add(Question);
     }
     
