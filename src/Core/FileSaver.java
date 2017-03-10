@@ -12,15 +12,21 @@ import java.io.BufferedReader;
 
 public class FileSaver{
   public static void main(String[] args){
-      LoadFile("test.xml");
+      Core.Leitner.Deck NewDeck = new Core.Leitner.Deck();
+      NewDeck.AddQuestionHolder(new Core.Leitner.Holder("abcd","1234"));
+      CreateFile(NewDeck);
+      LoadFile("/projects/ComputerScienceProject2/testCreated.xml");
   }
     
   public static void CreateFile(Core.Leitner.Deck TheDeck){
-        List<String> XMLFileLines = new ArrayList<String>();
+    List<String> XMLFileLines = new ArrayList<String>();
+    System.out.println(TheDeck.Boxes[0].TimeToSee);
   	XMLFileLines.add("<deck>");
   	System.out.println(TheDeck.Boxes.length);
     	for(int X=0;X < TheDeck.Boxes.length;X++){
            XMLFileLines.add("<Box" + X + ">");
+           System.out.println(X);
+           XMLFileLines.add("<TimeToSee>"+ TheDeck.Boxes[X].TimeToSee +"</TimeToSee>");
            	try{
 	           for(int S=0;S < TheDeck.Boxes[X].Questions.size();S++){
 	             XMLFileLines.add("<Card>");
@@ -36,10 +42,11 @@ public class FileSaver{
     	}
     	XMLFileLines.add("</deck>");
         
-        System.out.print(System.getenv("LOCALAPPDATA") + "\\test.xml");
-        Path file = Paths.get(System.getenv("LOCALAPPDATA") + "\\test.xml");
+        //ADD BACK IN!
+        //System.out.print(System.getenv("LOCALAPPDATA") + "\\test.xml");
+        //Path file = Paths.get(System.getenv("LOCALAPPDATA") + "\\test.xml");
         try{
-            Files.write(file,XMLFileLines,Charset.forName("UTF-8"));
+            Files.write(Paths.get("/projects/ComputerScienceProject2/testCreated.xml"),XMLFileLines,Charset.forName("UTF-8"));
             System.out.println("File Created");
         }catch(IOException e){
             e.printStackTrace();
@@ -47,41 +54,52 @@ public class FileSaver{
   }
   
   public static void LoadFile(String FilePath){
-      Path FilePathFull = Paths.get(System.getenv("LOCALAPPDATA") + "\\" + FilePath);
+      //ADD BACK IN!
+      //Path FilePathFull = Paths.get(System.getenv("LOCALAPPDATA") + "\\" + FilePath);
       List<String> list = new ArrayList<>(); 
-      try(BufferedReader Br = Files.newBufferedReader(FilePathFull)){
+      try(BufferedReader Br = Files.newBufferedReader(Paths.get(FilePath))){
           list = Br.lines().collect(Collectors.toList());
       }catch(IOException e){
           //Error Occured
       }
       
+      //Create an Empty deck to append to!
       Core.Leitner.Deck CreatedDeck = new Deck();
       int SelectedBoxIndex = -1;
       Core.Leitner.Holder Temp = new Core.Leitner.Holder("Test","Test");
       
       for(int I=0;I < list.toArray().length;I++){
           String Text = list.toArray()[I].toString();
+          
+          //Get First Set of Text Between <HERE>
           Pattern regexString = Pattern.compile(Pattern.quote("<") + "(.*?)" + Pattern.quote(">"));
           Matcher M = regexString.matcher(Text);
           M.find();
+          
+          //Get the Text Between the two <>HERE<>
           Pattern Between = Pattern.compile(Pattern.quote(">") + "(.*?)" + Pattern.quote("<"));
           Matcher Bet = Between.matcher(Text);
           Bet.find();
-          System.out.println(M.group(1));
-          System.out.println(Bet.groupCount());
+          
+          //Get the first Bracket that contains box and set the current selected box to that Index!
           if(M.group(1).contains("Box") && M.group(1).charAt(0) != '/'){
-              SelectedBoxIndex = Integer.parseInt(M.group(1).substring(3, 4));
-          }else if(M.group(1).contains("Question") && M.group(1).charAt(0) != '/'){
-              Temp.Question = Bet.group(0);
+              SelectedBoxIndex = Integer.parseInt(M.group(1).substring(3, 4));  
+          }
+          else if(M.group(1).contains("Question") && M.group(1).charAt(0) != '/'){
+              //Sets the Question
+              Temp.Question = Bet.group(0).substring(1,Bet.group(0).length()-1);
+              
+              //Sets the Answer ( And Finds it! )
               String NewText = list.toArray()[I+1].toString();
               Matcher Bet2 = Between.matcher(NewText);
               Bet2.find();
-              Temp.Answer = Bet2.group(0);
+              Temp.Answer = Bet2.group(0).substring(1,Bet2.group(0).length()-1);
               CreatedDeck.Boxes[SelectedBoxIndex].AddQuestionHolder(Temp);
               I = I +1;
           }
       }
       System.out.println(CreatedDeck.Boxes[0].Questions.get(0).Question);
+      System.out.println(CreatedDeck.Boxes[0].Questions.get(0).Answer);
       
     }
   }
