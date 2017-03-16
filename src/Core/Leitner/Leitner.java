@@ -3,6 +3,8 @@ package Core.Leitner;
 import Core.FileSaver;
 import java.util.*;
 
+//DOCUMENT WHOLE FILE
+
 public class Leitner {
 
     public static Deck SelectedDeck;
@@ -33,10 +35,23 @@ public class Leitner {
         return null;
     }
     
+    public void NextQuestion(){
+        CurrentQuestion++;
+    }
+    
     public String ReadQuestion(){
         if(CurrentQuestion < CurrentBox.Questions.size()){
             Holder QuestionHolder = CurrentBox.Questions.get(CurrentQuestion);
             return QuestionHolder.Question;
+        }else{
+            return null;
+        }
+    }
+    
+    public String ReadAnswer(){
+        if(CurrentQuestion < CurrentBox.Questions.size()){
+            Holder AnswerHolder = CurrentBox.Questions.get(CurrentQuestion);
+            return AnswerHolder.Answer;
         }else{
             return null;
         }

@@ -19,18 +19,25 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
+import javafx.scene.paint.*;
 import Core.Leitner.*;
 
 public class Session {
     
     static Text QuestionText = null;
+    static Text AnswerText = null;
     static Button RevealButton = null;
+    static HBox Options = null;
     
     public static void SessionHandler(Deck PassedDeck){
         Leitner SessionOBJ = new Leitner(PassedDeck);
+        RevealButton.setVisible(true);
         RevealButton.setOnAction(new EventHandler<ActionEvent>(){
             @Override public void handle(ActionEvent e){
-                
+                AnswerText.setText(SessionOBJ.ReadAnswer());
+                AnswerText.setVisible(true);
+                Options.setVisible(true);
+                RevealButton.setVisible(false);
             }
         });
                 
@@ -40,7 +47,7 @@ public class Session {
     public static void StartSessionStage(Stage primaryStage,String DeckName,Core.Leitner.Deck TheDeck){
         primaryStage.setTitle("Register");
         
-        VBox vbox = new VBox();
+        VBox vbox = new VBox(0);
         vbox.setAlignment(Pos.TOP_CENTER);
         vbox.setPadding(new Insets(55,50,0,50));
 
@@ -51,10 +58,26 @@ public class Session {
         LoginText2.setPadding(new Insets(0,0,50,0));
         
         QuestionText = new Text("Question Text Here!");
+        AnswerText = new Text("");
+        AnswerText.managedProperty().bind(AnswerText.visibleProperty());
+        AnswerText.setVisible(false);
+        AnswerText.setFill(Paint.valueOf("red"));
         
         RevealButton = new Button("Reveal");
-
-        vbox.getChildren().addAll(LoginText,LoginText2,QuestionText,RevealButton);
+        RevealButton.managedProperty().bind(RevealButton.visibleProperty());
+        RevealButton.setVisible(false);
+        RevealButton.setPadding(new Insets(10,50,10,50));
+        
+        Options = new HBox(10);
+        Button Good = new Button("Good");
+        Button Bad = new Button("Bad");
+        Options.getChildren().addAll(Good,Bad);
+        Options.managedProperty().bind(Options.visibleProperty());
+        Options.setVisible(false);
+        Options.setAlignment(Pos.CENTER);
+        Options.setPadding(new Insets(10,0,10,0));
+                
+        vbox.getChildren().addAll(LoginText,LoginText2,QuestionText,AnswerText,RevealButton,Options);
         
         Scene RegisterScene = new Scene(vbox,450,350);
         primaryStage.setScene(RegisterScene);
