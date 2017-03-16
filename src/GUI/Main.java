@@ -1,5 +1,7 @@
 package GUI;
 
+import Core.FileSaver;
+import java.util.*;
 import javafx.scene.layout.*;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -33,6 +35,22 @@ public class Main {
         LoginText2.setAlignment(Pos.CENTER);
         LoginText2.setPadding(new Insets(0,0,50,0));
 
+        VBox DecksVbox = new VBox();
+        //Get Decks and add to GUI
+        DecksVbox.setAlignment(Pos.CENTER);
+        ArrayList<String> Files = FileSaver.ListDecks();
+        for(int X =0; X< Files.size();X++){
+            String FileName = Files.get(X);
+            Core.Leitner.Deck ThisDeck = FileSaver.LoadFile(FileName);
+            Button OpenDeckTemp = new Button(FileName.substring(0,FileName.length()-4));
+            OpenDeckTemp.setOnAction(new EventHandler<ActionEvent>(){
+                @Override public void handle(ActionEvent e){
+                    Session.StartSessionStage(primaryStage, FileName, ThisDeck);
+                }
+            });
+            DecksVbox.getChildren().addAll(OpenDeckTemp);
+        }
+        
         HBox hbox = new HBox();
         hbox.setAlignment(Pos.CENTER);
         Button CreateNewDeck = new Button("Create New Deck");
@@ -49,7 +67,7 @@ public class Main {
         });
         
         hbox.getChildren().addAll(CreateNewDeck,SearchDeck);
-        vbox.getChildren().addAll(LoginText,LoginText2,hbox);
+        vbox.getChildren().addAll(LoginText,LoginText2,DecksVbox,hbox);
         
         Scene RegisterScene = new Scene(vbox,450,350);
         primaryStage.setScene(RegisterScene);

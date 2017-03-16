@@ -5,20 +5,42 @@ import java.util.regex.Pattern;
 import Core.Leitner.Deck;
 import java.util.*;
 import java.nio.file.*;
+import java.io.File;
 import java.nio.charset.Charset;
 import java.io.IOException;
 import java.util.stream.Collectors;
 import java.io.BufferedReader;
 
 public class FileSaver{
+    
+  public static Path FilePath = Paths.get(System.getenv("LOCALAPPDATA") + "\\ReviseFaster");
+    
   public static void main(String[] args){
       Core.Leitner.Deck NewDeck = new Core.Leitner.Deck();
       NewDeck.AddQuestionHolder(new Core.Leitner.Holder("abcd","1234"));
-      CreateFile(NewDeck);
-      LoadFile("/projects/ComputerScienceProject2/testCreated.xml");
+
+      CreateFile(NewDeck,"Maths");
   }
     
-  public static void CreateFile(Core.Leitner.Deck TheDeck){
+  public static void CreateFilePath(){
+      File Dir = new File(FilePath.toString());
+      if(!Dir.exists()){
+          Dir.mkdir();
+      }    
+  }
+  
+  public static ArrayList<String> ListDecks(){
+      CreateFilePath();
+      File Dir = new File(FilePath.toString());
+      ArrayList<String> Files = new ArrayList<String>();
+      for(File FileEntry : Dir.listFiles()){
+          System.out.println(FileEntry.getName());
+          Files.add(FileEntry.getName().toString());
+      }
+      return Files;
+  }
+  
+  public static void CreateFile(Core.Leitner.Deck TheDeck,String DeckName){
     List<String> XMLFileLines = new ArrayList<String>();
     System.out.println(TheDeck.Boxes[0].TimeToSee);
   	XMLFileLines.add("<deck>");
@@ -42,22 +64,19 @@ public class FileSaver{
     	}
     	XMLFileLines.add("</deck>");
         
-        //ADD BACK IN!
-        //System.out.print(System.getenv("LOCALAPPDATA") + "\\test.xml");
-        //Path file = Paths.get(System.getenv("LOCALAPPDATA") + "\\test.xml");
+        Path file = Paths.get(System.getenv("LOCALAPPDATA") + "\\ReviseFaster\\"+DeckName+".xml");
         try{
-            Files.write(Paths.get("/projects/ComputerScienceProject2/testCreated.xml"),XMLFileLines,Charset.forName("UTF-8"));
+            Files.write(file,XMLFileLines,Charset.forName("UTF-8"));
             System.out.println("File Created");
         }catch(IOException e){
             e.printStackTrace();
         }
   }
   
-  public static void LoadFile(String FilePath){
-      //ADD BACK IN!
-      //Path FilePathFull = Paths.get(System.getenv("LOCALAPPDATA") + "\\" + FilePath);
+  public static Core.Leitner.Deck LoadFile(String FileName){
+      Path FilePathFull = Paths.get(System.getenv("LOCALAPPDATA") + "\\ReviseFaster\\" + FileName);
       List<String> list = new ArrayList<>(); 
-      try(BufferedReader Br = Files.newBufferedReader(Paths.get(FilePath))){
+      try(BufferedReader Br = Files.newBufferedReader(FilePathFull)){
           list = Br.lines().collect(Collectors.toList());
       }catch(IOException e){
           //Error Occured
@@ -98,8 +117,6 @@ public class FileSaver{
               I = I +1;
           }
       }
-      System.out.println(CreatedDeck.Boxes[0].Questions.get(0).Question);
-      System.out.println(CreatedDeck.Boxes[0].Questions.get(0).Answer);
-      
+      return CreatedDeck;
     }
   }

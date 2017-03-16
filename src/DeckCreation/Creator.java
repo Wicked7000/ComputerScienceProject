@@ -23,7 +23,7 @@ public class Creator {
     
     public void FinishEdits(){
         //Save file
-        FileSaver.CreateFile(ThisDeck);
+        FileSaver.CreateFile(ThisDeck,"null");
         System.out.print("File Saved!");
     }
 }

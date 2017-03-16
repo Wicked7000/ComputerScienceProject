@@ -53,7 +53,7 @@ public class Login extends Application {
         }
     }
     
-    public void RegisterStage(Stage primaryStage){
+    public void RegisterStage(Stage primaryStage){        
         primaryStage.setTitle("Register");
         
         VBox vbox = new VBox();
@@ -186,5 +186,8 @@ public class Login extends Application {
         LoginScene = scene;
         primaryStage.setScene(scene);
         primaryStage.show();
+                ///DEBUG
+        Main.StartMainStage(primaryStage);
+        ///END DEBUG
     }
 }

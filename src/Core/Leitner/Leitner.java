@@ -6,56 +6,39 @@ import java.util.*;
 public class Leitner {
 
     public static Deck SelectedDeck;
-
-    public static void main(String[] args) {
-        LoadDeck();
-        StartSession();
-        StartSession();
+    public static Box CurrentBox;
+    public static int CurrentQuestion;
+    
+    public Leitner(Deck _SelectedDeck){
+        SelectedDeck = _SelectedDeck;
+        CurrentBox = GetNextBox(SelectBox());
     }
-
-    public static void StartSession() {
-        System.out.println(SelectedDeck.DeckName);
-
-        Box SelectedBox = null;
-        int SelectedBoxInt = 0;
-
-        for (int x = 0; x < 9; x++) {
-            if (SelectedDeck.Boxes[x].TimeToSee == 0) {
-                SelectedBox = SelectedDeck.Boxes[x];
-                SelectedBoxInt = x;
-                break;
+    
+    public static ArrayList<Box> SelectBox(){
+        ArrayList<Box> StackBoxes = new ArrayList<>();
+        for(int I=0;I < SelectedDeck.Boxes.length;I++){
+            long CurrentTime = System.currentTimeMillis() / 1000L;
+            if(CurrentTime >= SelectedDeck.Boxes[I].TimeToSee){
+                StackBoxes.add(SelectedDeck.Boxes[I]);
             }
         }
-        if (SelectedBox.Questions.size() <= 0) {
-            System.out.println("No Reviews to be done!");
-            return;
-        }
-
-        Scanner terminalInput = new Scanner(System.in);
-
-        ArrayList<Holder> CorrectQuestions = new ArrayList<Holder>();
-        for (int X = 0; X < SelectedBox.Questions.size(); X++) {
-            System.out.println(SelectedBox.Questions.get(X).Question);
-            String s = terminalInput.nextLine();
-            if (s.trim().toLowerCase().equals(SelectedBox.Questions.get(X).Answer.toLowerCase())) {
-                System.out.println("Correct!");
-                CorrectQuestions.add(SelectedBox.Questions.get(X));
-            }
-        }
-
-        SelectedDeck.FinishSession(CorrectQuestions, SelectedBoxInt);
-        FileSaver.CreateFile(SelectedDeck);
+        return StackBoxes;
     }
-
-    public static void LoadDeck() {
-        Deck TheDeck = new Deck();
-        TheDeck.DeckName = "Physics";
-
-        TheDeck.AddQuestion("What is the unit between the distance and sun", "AU");
-        TheDeck.AddQuestion("Will the Train fit in the tunnel Yes or No", "Yes");
-
-        SelectedDeck = TheDeck;
-
+    
+    public Core.Leitner.Box GetNextBox(ArrayList<Box> Stack){
+        if(Stack.size() > 0){
+            CurrentQuestion = 0;
+            return Stack.get(0);
+        }
+        return null;
     }
-
+    
+    public String ReadQuestion(){
+        if(CurrentQuestion < CurrentBox.Questions.size()){
+            Holder QuestionHolder = CurrentBox.Questions.get(CurrentQuestion);
+            return QuestionHolder.Question;
+        }else{
+            return null;
+        }
+    }
 }
