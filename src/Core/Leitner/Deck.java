@@ -22,6 +22,22 @@ public class Deck {
         }
     }
 
+    ///TODO: DOCUMENT THIS FUNCTION
+    public boolean NeedReview(){
+        int BoxesForReview = 0;
+        int CardsForReview = 0;
+        for(int X=0;X < Boxes.length-1;X++){
+            if(Boxes[X].TimeToSee <= System.currentTimeMillis() / 1000L){
+                CardsForReview += Boxes[X].Questions.size();
+                BoxesForReview += 1;
+            }
+        }
+        if(BoxesForReview > 1){
+            return true;
+        }
+        return false;
+    }
+    
     public void AddQuestion(String _Q, String _A) {
         Boxes[0].AddQuestion(_Q, _A);
     }

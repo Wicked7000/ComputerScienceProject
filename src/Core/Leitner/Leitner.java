@@ -3,7 +3,7 @@ package Core.Leitner;
 import Core.FileSaver;
 import java.util.*;
 
-//DOCUMENT WHOLE FILE
+//TODO:DOCUMENT WHOLE FILE
 
 public class Leitner {
 
@@ -11,9 +11,23 @@ public class Leitner {
     public static Box CurrentBox;
     public static int CurrentQuestion;
     
+    public static ArrayList<Holder> CorrectQuestions;
+    public static ArrayList<Holder> IncorrectQuestions;
+    
     public Leitner(Deck _SelectedDeck){
         SelectedDeck = _SelectedDeck;
+        CorrectQuestions = new ArrayList<>();
+        IncorrectQuestions = new ArrayList<>();
         CurrentBox = GetNextBox(SelectBox());
+    }
+    
+    public int IsNextQuestion(){
+        System.out.println(CurrentBox.Questions.size());
+        System.out.println(CurrentQuestion);
+        if(CurrentBox.Questions.size() <= CurrentQuestion){
+         return -1;
+        }
+        else{ return 1;}
     }
     
     public static ArrayList<Box> SelectBox(){
@@ -48,10 +62,26 @@ public class Leitner {
         }
     }
     
-    public String ReadAnswer(){
+    public void AddCorrectQuestion(){
+        CorrectQuestions.add(CurrentBox.Questions.get(CurrentQuestion));
+    }
+    
+    public void AddIncorrectQuestion(){
+        System.out.println(CurrentBox.Questions.get(CurrentQuestion));
+        IncorrectQuestions.add(CurrentBox.Questions.get(CurrentQuestion));
+    }
+    
+    public Map<Boolean,String> ReadAndCheckAnswer(String InputAnswer){
         if(CurrentQuestion < CurrentBox.Questions.size()){
             Holder AnswerHolder = CurrentBox.Questions.get(CurrentQuestion);
-            return AnswerHolder.Answer;
+            Map<Boolean,String> map = new HashMap<>();
+            if(InputAnswer.equals(AnswerHolder.Answer)){
+                map.put(true,AnswerHolder.Answer);
+                return map;
+            }else{
+                map.put(false,AnswerHolder.Answer);
+                return map;
+            }
         }else{
             return null;
         }

@@ -13,13 +13,15 @@ import java.io.BufferedReader;
 
 public class FileSaver{
     
+  ///TODO: GET THE CHANGES TO THIS PAGE AND DOCUMENT THEM!  
+    
   public static Path FilePath = Paths.get(System.getenv("LOCALAPPDATA") + "\\ReviseFaster");
     
   public static void main(String[] args){
       Core.Leitner.Deck NewDeck = new Core.Leitner.Deck();
       NewDeck.AddQuestionHolder(new Core.Leitner.Holder("abcd","1234"));
 
-      CreateFile(NewDeck,"Maths");
+      CreateFile(NewDeck);
   }
     
   public static void CreateFilePath(){
@@ -40,11 +42,10 @@ public class FileSaver{
       return Files;
   }
   
-  public static void CreateFile(Core.Leitner.Deck TheDeck,String DeckName){
+  public static void CreateFile(Core.Leitner.Deck TheDeck){
     List<String> XMLFileLines = new ArrayList<String>();
-    System.out.println(TheDeck.Boxes[0].TimeToSee);
   	XMLFileLines.add("<deck>");
-  	System.out.println(TheDeck.Boxes.length);
+        XMLFileLines.add("<name>"+TheDeck.DeckName+"</name>");
     	for(int X=0;X < TheDeck.Boxes.length;X++){
            XMLFileLines.add("<Box" + X + ">");
            System.out.println(X);
@@ -64,7 +65,7 @@ public class FileSaver{
     	}
     	XMLFileLines.add("</deck>");
         
-        Path file = Paths.get(System.getenv("LOCALAPPDATA") + "\\ReviseFaster\\"+DeckName+".xml");
+        Path file = Paths.get(System.getenv("LOCALAPPDATA") + "\\ReviseFaster\\"+TheDeck.DeckName+".xml");
         try{
             Files.write(file,XMLFileLines,Charset.forName("UTF-8"));
             System.out.println("File Created");
@@ -84,6 +85,7 @@ public class FileSaver{
       
       //Create an Empty deck to append to!
       Core.Leitner.Deck CreatedDeck = new Deck();
+      CreatedDeck.DeckName = FileName.substring(0,FileName.length()-4);
       int SelectedBoxIndex = -1;
       Core.Leitner.Holder Temp = new Core.Leitner.Holder("Test","Test");
       
@@ -101,6 +103,9 @@ public class FileSaver{
           Bet.find();
           
           //Get the first Bracket that contains box and set the current selected box to that Index!
+          if(M.group(1).contains("Name") && M.group(1).charAt(0) != '/'){
+              System.out.println(M.group(1));
+          }
           if(M.group(1).contains("Box") && M.group(1).charAt(0) != '/'){
               SelectedBoxIndex = Integer.parseInt(M.group(1).substring(3, 4));  
           }

@@ -35,19 +35,26 @@ public class Main {
         LoginText2.setAlignment(Pos.CENTER);
         LoginText2.setPadding(new Insets(0,0,50,0));
 
-        VBox DecksVbox = new VBox();
+        VBox DecksVbox = new VBox(3);
+        DecksVbox.setPadding(new Insets(0,0,15,0));
         //Get Decks and add to GUI
         DecksVbox.setAlignment(Pos.CENTER);
         ArrayList<String> Files = FileSaver.ListDecks();
         for(int X =0; X< Files.size();X++){
             String FileName = Files.get(X);
             Core.Leitner.Deck ThisDeck = FileSaver.LoadFile(FileName);
+            
             Button OpenDeckTemp = new Button(FileName.substring(0,FileName.length()-4));
+            OpenDeckTemp.setPrefSize(125, 25);
             OpenDeckTemp.setOnAction(new EventHandler<ActionEvent>(){
                 @Override public void handle(ActionEvent e){
                     Session.StartSessionStage(primaryStage, FileName, ThisDeck);
                 }
             });
+            if(ThisDeck.NeedReview() == true){
+                OpenDeckTemp.setStyle("-fx-background-color: red");
+            }
+            
             DecksVbox.getChildren().addAll(OpenDeckTemp);
         }
         

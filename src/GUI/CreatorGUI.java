@@ -20,6 +20,10 @@ import javafx.scene.control.Alert.AlertType;
 
 import DeckCreation.Creator;
 
+///
+/// TODO: DOC THE CHANGES ON THIS PAGE
+///
+
 public class CreatorGUI {
     public static void StartCreator(Stage primaryStage){
         primaryStage.setTitle("Create new deck");
@@ -34,9 +38,15 @@ public class CreatorGUI {
         Title.setAlignment(Pos.CENTER);
         Title.setPadding(new Insets(0,0,50,0));
 
+        HBox NameOfDeck = new HBox(20);
+        Label NameDeck = new Label("Deck Name:");
+        TextField NameField = new TextField();
+        NameOfDeck.getChildren().addAll(NameDeck,NameField);
+        NameOfDeck.setPadding(new Insets(0,0,20,0));
+        
         //First HBox for Question and input
-        HBox hbox = new HBox();
-        hbox.setAlignment(Pos.CENTER);
+        HBox QuestionHBox = new HBox();
+        QuestionHBox.setAlignment(Pos.CENTER);
         Label QuestionLabel = new Label("Question/Hint:");
         QuestionLabel.setMaxWidth(Double.MAX_VALUE);
         
@@ -44,8 +54,8 @@ public class CreatorGUI {
         QuestionField.setMaxWidth(Double.MAX_VALUE);
         
         //Second HBox for Answer and input
-        HBox hbox2 = new HBox();
-        hbox.setAlignment(Pos.CENTER);
+        HBox AnswerHBox = new HBox();
+        AnswerHBox.setAlignment(Pos.CENTER);
         Label AnswerLabel = new Label("Answer:");
         AnswerLabel.setMaxWidth(Double.MAX_VALUE);
         
@@ -57,9 +67,8 @@ public class CreatorGUI {
         
         AnswerLabel.setPrefWidth(150);
         AnswerField.setPrefWidth(200);
-        
-        hbox2.setPadding(new Insets(0,0,25,0));
-        
+  
+        VBox ButtonsHolder = new VBox(10);
         
         Button AddQuestion = new Button("Add");
         AddQuestion.setOnAction(new EventHandler<ActionEvent>(){
@@ -71,7 +80,7 @@ public class CreatorGUI {
         Button FinishDeck = new Button("Finish and Save");
         FinishDeck.setOnAction(new EventHandler<ActionEvent>(){
             @Override public void handle(ActionEvent e){
-                   CreatorInstance.FinishEdits();
+                   CreatorInstance.FinishEdits(NameField.getText());
             }
         });
         
@@ -81,10 +90,14 @@ public class CreatorGUI {
                    Main.StartMainStage(primaryStage);
             }
         });
+        ButtonsHolder.getChildren().addAll(AddQuestion,FinishDeck,Quit);
+        ButtonsHolder.setAlignment(Pos.CENTER);
+        ButtonsHolder.setPadding(new Insets(20,0,0,0));
         
-        hbox.getChildren().addAll(QuestionLabel,QuestionField);
-        hbox2.getChildren().addAll(AnswerLabel,AnswerField);
-        vbox.getChildren().addAll(Title,hbox,hbox2,AddQuestion,FinishDeck,Quit);
+        
+        QuestionHBox.getChildren().addAll(QuestionLabel,QuestionField);
+        AnswerHBox.getChildren().addAll(AnswerLabel,AnswerField);
+        vbox.getChildren().addAll(Title,NameOfDeck,QuestionHBox,AnswerHBox,ButtonsHolder);
         
         Scene RegisterScene = new Scene(vbox,450,350);
         primaryStage.setScene(RegisterScene);

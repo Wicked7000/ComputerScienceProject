@@ -21,9 +21,10 @@ public class Creator {
         System.out.print("Added a Question!");
     }
     
-    public void FinishEdits(){
+    public void FinishEdits(String _DeckName){
         //Save file
-        FileSaver.CreateFile(ThisDeck,"null");
+        ThisDeck.DeckName = _DeckName;
+        FileSaver.CreateFile(ThisDeck);
         System.out.print("File Saved!");
     }
 }

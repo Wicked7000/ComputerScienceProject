@@ -24,8 +24,9 @@ public class Login extends Application {
     public static SQL Instance = null;
     
     public static void main(String[] args) {
-        Instance = new SQL();
-        Instance.Setup();
+        //UNCOMMENT FOR PRODUCTION 
+        //Instance = new SQL();
+        //Instance.Setup();
         launch(args);
     }
     
