@@ -5,6 +5,7 @@ import Core.Leitner.Deck;
 import Core.Leitner.Box;
 import java.util.ArrayList;
 import Core.FileSaver;
+import Core.APIHelper;
 
 public class Creator {
     public ArrayList<Holder> Questions;
@@ -24,7 +25,9 @@ public class Creator {
     public void FinishEdits(String _DeckName){
         //Save file
         ThisDeck.DeckName = _DeckName;
-        FileSaver.CreateFile(ThisDeck);
+        APIHelper Helper = new APIHelper();
+        Helper.PostDeck(_DeckName,ThisDeck);
+        FileSaver.CreateFile(ThisDeck,false);
         System.out.print("File Saved!");
     }
 }

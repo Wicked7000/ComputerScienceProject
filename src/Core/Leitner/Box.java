@@ -7,14 +7,21 @@ public class Box {
 
     public int BoxNumber;
     public ArrayList<Holder> Questions;
+    public int TimeConstant;
     public long TimeToSee = 0;
 
     public Box(int _BN, ArrayList<Holder> _Q, int _Time) {
+        TimeConstant = _Time;
         BoxNumber = _BN;
         Questions = _Q;
-        TimeToSee = System.currentTimeMillis() / 1000L + GetSpacing(_Time);
+        TimeToSee = System.currentTimeMillis() / 1000L + GetSpacing(TimeConstant);
     }
 
+    //Used when a session has been completed!
+    public void UpdateTime(){
+        TimeToSee = System.currentTimeMillis() / 1000L + GetSpacing(TimeConstant);
+    }
+    
     public long GetSpacing(int TimeConstant){
         long Temp = 0;
         switch(TimeConstant){

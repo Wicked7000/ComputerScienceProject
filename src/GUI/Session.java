@@ -44,7 +44,6 @@ public class Session {
     
     public static boolean CheckSession(){
         if(SessionOBJ.IsNextQuestion() == -1){
-            System.out.println("Testing");
             ExitButton.setVisible(true);
             NextQuestion.setVisible(false);
             QuestionText.setVisible(false);
@@ -53,6 +52,7 @@ public class Session {
             AnswerText.setText("Session finished please exit!");
             return false;
         }else{
+            NextQuestion.setVisible(false);
             QuestionText.setVisible(true);
             SubmitButton.setVisible(true);
             AnswerField.setVisible(true);
@@ -75,8 +75,10 @@ public class Session {
         });
         
         if(Proceed == true){
+        NextQuestionPrep();
         SubmitButton.setOnAction(new EventHandler<ActionEvent>(){
             @Override public void handle(ActionEvent e){
+                //Holds if the answer was correct and the actual answer!
                 Map<Boolean,String> SessionAns = SessionOBJ.ReadAndCheckAnswer(AnswerField.getText());
                 String Answer = SessionAns.get(true);
                 QuestionText.setVisible(false);
@@ -144,6 +146,7 @@ public class Session {
         ExitButton.managedProperty().bind(ExitButton.visibleProperty());
         ExitButton.setOnAction(new EventHandler<ActionEvent>(){
             @Override public void handle(ActionEvent e){
+                SessionOBJ.FinishAndSave();
                 SessionOBJ = null;
                 Main.StartMainStage(primaryStage);
             }

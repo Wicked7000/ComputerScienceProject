@@ -20,6 +20,7 @@ import javafx.*;
 import javafx.scene.control.Alert.AlertType;
 
 import GUI.CreatorGUI;
+import GUI.Search;
 
 public class Main {
     public static void StartMainStage(Stage primaryStage){
@@ -44,17 +45,19 @@ public class Main {
             String FileName = Files.get(X);
             Core.Leitner.Deck ThisDeck = FileSaver.LoadFile(FileName);
             
-            Button OpenDeckTemp = new Button(FileName.substring(0,FileName.length()-4));
+            //Get information about the deck!
+            Map<String,Integer> Data = ThisDeck.NeedReview();
+            String Format = Data.get("Cards") +"/"+Data.get("TotalCards");
+            
+            Button OpenDeckTemp = new Button(FileName.substring(0,FileName.length()-4) +": "+ Format);
             OpenDeckTemp.setPrefSize(125, 25);
             OpenDeckTemp.setOnAction(new EventHandler<ActionEvent>(){
                 @Override public void handle(ActionEvent e){
                     Session.StartSessionStage(primaryStage, FileName, ThisDeck);
                 }
             });
-            if(ThisDeck.NeedReview() == true){
-                OpenDeckTemp.setStyle("-fx-background-color: red");
-            }
             
+                    
             DecksVbox.getChildren().addAll(OpenDeckTemp);
         }
         
@@ -70,6 +73,12 @@ public class Main {
         CreateNewDeck.setOnAction(new EventHandler<ActionEvent>(){
             @Override public void handle(ActionEvent e){
                CreatorGUI.StartCreator(primaryStage); 
+            }
+        });
+        
+        SearchDeck.setOnAction(new EventHandler<ActionEvent>(){
+            @Override public void handle(ActionEvent e){
+                Search.StartSearchGUI(primaryStage);
             }
         });
         

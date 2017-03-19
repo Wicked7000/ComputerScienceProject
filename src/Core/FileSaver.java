@@ -20,8 +20,6 @@ public class FileSaver{
   public static void main(String[] args){
       Core.Leitner.Deck NewDeck = new Core.Leitner.Deck();
       NewDeck.AddQuestionHolder(new Core.Leitner.Holder("abcd","1234"));
-
-      CreateFile(NewDeck);
   }
     
   public static void CreateFilePath(){
@@ -42,8 +40,21 @@ public class FileSaver{
       return Files;
   }
   
-  public static void CreateFile(Core.Leitner.Deck TheDeck){
-    List<String> XMLFileLines = new ArrayList<String>();
+  public static void DownloadFile(String DownloadXML,String Name){
+      String[] SplitStrings = DownloadXML.split("\n");
+      List<String> Lines = Arrays.asList(SplitStrings);
+      
+      Path file = Paths.get(System.getenv("LOCALAPPDATA") + "\\ReviseFaster\\"+Name+".xml");
+      try{
+        Files.write(file,Lines,Charset.forName("UTF-8"));
+        System.out.println("File Created");
+      }catch(IOException e){
+        e.printStackTrace();
+      }
+  }
+  
+  public static List<String> CreateFile(Core.Leitner.Deck TheDeck,boolean NoFile){
+    List<String> XMLFileLines = new ArrayList<>();
   	XMLFileLines.add("<deck>");
         XMLFileLines.add("<name>"+TheDeck.DeckName+"</name>");
     	for(int X=0;X < TheDeck.Boxes.length;X++){
@@ -65,13 +76,16 @@ public class FileSaver{
     	}
     	XMLFileLines.add("</deck>");
         
-        Path file = Paths.get(System.getenv("LOCALAPPDATA") + "\\ReviseFaster\\"+TheDeck.DeckName+".xml");
-        try{
-            Files.write(file,XMLFileLines,Charset.forName("UTF-8"));
-            System.out.println("File Created");
-        }catch(IOException e){
-            e.printStackTrace();
+        if(NoFile != true){
+            Path file = Paths.get(System.getenv("LOCALAPPDATA") + "\\ReviseFaster\\"+TheDeck.DeckName+".xml");
+            try{
+                Files.write(file,XMLFileLines,Charset.forName("UTF-8"));
+                System.out.println("File Created");
+            }catch(IOException e){
+                e.printStackTrace();
+            }
         }
+        return XMLFileLines;   
   }
   
   public static Core.Leitner.Deck LoadFile(String FileName){
@@ -87,7 +101,6 @@ public class FileSaver{
       Core.Leitner.Deck CreatedDeck = new Deck();
       CreatedDeck.DeckName = FileName.substring(0,FileName.length()-4);
       int SelectedBoxIndex = -1;
-      Core.Leitner.Holder Temp = new Core.Leitner.Holder("Test","Test");
       
       for(int I=0;I < list.toArray().length;I++){
           String Text = list.toArray()[I].toString();
@@ -103,22 +116,25 @@ public class FileSaver{
           Bet.find();
           
           //Get the first Bracket that contains box and set the current selected box to that Index!
-          if(M.group(1).contains("Name") && M.group(1).charAt(0) != '/'){
-              System.out.println(M.group(1));
-          }
           if(M.group(1).contains("Box") && M.group(1).charAt(0) != '/'){
               SelectedBoxIndex = Integer.parseInt(M.group(1).substring(3, 4));  
           }
+          //Used to set time to see
+          else if(M.group(1).contains("TimeToSee") && M.group(1).charAt(0) != '/'){
+              long TimeToSee = Long.parseLong(Bet.group(0).substring(1,Bet.group(0).length()-1));
+              CreatedDeck.Boxes[SelectedBoxIndex].TimeToSee = TimeToSee;
+          }
           else if(M.group(1).contains("Question") && M.group(1).charAt(0) != '/'){
+              Core.Leitner.Holder TempAdd = new Core.Leitner.Holder(null,null);
               //Sets the Question
-              Temp.Question = Bet.group(0).substring(1,Bet.group(0).length()-1);
-              
+              TempAdd.Question = Bet.group(0).substring(1,Bet.group(0).length()-1);
               //Sets the Answer ( And Finds it! )
               String NewText = list.toArray()[I+1].toString();
+              
               Matcher Bet2 = Between.matcher(NewText);
               Bet2.find();
-              Temp.Answer = Bet2.group(0).substring(1,Bet2.group(0).length()-1);
-              CreatedDeck.Boxes[SelectedBoxIndex].AddQuestionHolder(Temp);
+              TempAdd.Answer = Bet2.group(0).substring(1,Bet2.group(0).length()-1);
+              CreatedDeck.Boxes[SelectedBoxIndex].AddQuestionHolder(TempAdd);
               I = I +1;
           }
       }
