@@ -74,6 +74,8 @@ public class CreatorGUI {
         AddQuestion.setOnAction(new EventHandler<ActionEvent>(){
             @Override public void handle(ActionEvent e){
                    CreatorInstance.AddQuestion(QuestionField.getText(), AnswerField.getText());
+                   AnswerField.setText("");
+                   QuestionField.setText("");
             }
         });
         
@@ -81,16 +83,11 @@ public class CreatorGUI {
         FinishDeck.setOnAction(new EventHandler<ActionEvent>(){
             @Override public void handle(ActionEvent e){
                    CreatorInstance.FinishEdits(NameField.getText());
-            }
-        });
-        
-        Button Quit = new Button("Quit");
-        Quit.setOnAction(new EventHandler<ActionEvent>(){
-            @Override public void handle(ActionEvent e){
                    Main.StartMainStage(primaryStage);
             }
         });
-        ButtonsHolder.getChildren().addAll(AddQuestion,FinishDeck,Quit);
+        
+        ButtonsHolder.getChildren().addAll(AddQuestion,FinishDeck);
         ButtonsHolder.setAlignment(Pos.CENTER);
         ButtonsHolder.setPadding(new Insets(20,0,0,0));
         

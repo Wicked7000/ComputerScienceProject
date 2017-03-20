@@ -21,6 +21,7 @@ import javafx.scene.control.Alert.AlertType;
 
 import GUI.CreatorGUI;
 import GUI.Search;
+import javafx.beans.binding.Bindings;
 
 public class Main {
     public static void StartMainStage(Stage primaryStage){
@@ -34,10 +35,25 @@ public class Main {
         Label LoginText2 = new Label("Remember more!");
         LoginText.setAlignment(Pos.CENTER);
         LoginText2.setAlignment(Pos.CENTER);
-        LoginText2.setPadding(new Insets(0,0,50,0));
+        LoginText2.setPadding(new Insets(0,0,30,0));
 
         VBox DecksVbox = new VBox(3);
         DecksVbox.setPadding(new Insets(0,0,15,0));
+
+        GridPane grid = new GridPane();
+            
+        ScrollPane DeckPane = new ScrollPane();
+        DeckPane.setHvalue(0.5);
+        DeckPane.setVvalue(0.5);
+        DeckPane.setPrefSize(10, 150);
+        
+        StackPane Center = new StackPane(DecksVbox);
+        Center.minWidthProperty().bind(Bindings.createDoubleBinding(()->
+        DeckPane.getViewportBounds().getWidth(),DeckPane.viewportBoundsProperty()));
+        grid.getChildren().add(Center);
+        DeckPane.setContent(Center);
+        
+        
         //Get Decks and add to GUI
         DecksVbox.setAlignment(Pos.CENTER);
         ArrayList<String> Files = FileSaver.ListDecks();
@@ -83,7 +99,7 @@ public class Main {
         });
         
         hbox.getChildren().addAll(CreateNewDeck,SearchDeck);
-        vbox.getChildren().addAll(LoginText,LoginText2,DecksVbox,hbox);
+        vbox.getChildren().addAll(LoginText,LoginText2,DeckPane,hbox);
         
         Scene RegisterScene = new Scene(vbox,450,350);
         primaryStage.setScene(RegisterScene);

@@ -19,7 +19,6 @@ public class Creator {
     public void AddQuestion(String QuestionString,String AnswerString){
         //Adds Questions to the deck.
         ThisDeck.AddQuestion(QuestionString, AnswerString);
-        System.out.print("Added a Question!");
     }
     
     public void FinishEdits(String _DeckName){

@@ -21,6 +21,8 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 
 
 public class APIHelper {
+    String BaseURL = "https://revisefaster.herokuapp.com";
+    
     private String CreateDeck(String Url,String XML,String DeckName,String Author) throws Exception{
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(Url);
@@ -77,7 +79,7 @@ public class APIHelper {
         }
         
         try{
-            CreateDeck("http://localhost:8080/api/decks",XML,ThisDeck.DeckName,"Wicked7000");
+            CreateDeck(BaseURL+"/api/decks",XML,ThisDeck.DeckName,User.getUsername());
         }catch(Exception e){
             System.out.println(e);
             return false;
@@ -89,7 +91,7 @@ public class APIHelper {
         ArrayList<String> DeckNames = new ArrayList<>();
         String response = null;
         try{
-            response = APIRequestGET("http://localhost:8080/api/decks","GET");
+            response = APIRequestGET(BaseURL+"/api/decks","GET");
         }catch(Exception e){
             System.out.println(e);
         }
@@ -109,6 +111,7 @@ public class APIHelper {
              ThisMap.put("name", Obj.get("name").toString());
              ThisMap.put("id", Obj.get("_id").toString());
              ThisMap.put("xml", Obj.get("xml").toString());
+             ThisMap.put("author",Obj.get("author").toString());
              DataHolder.add(ThisMap);
             }catch(Exception e){
                 System.out.println(e);

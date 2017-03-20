@@ -14,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.geometry.Insets;
 import Core.Register;
 import Core.SQL;
+import Core.User;
 import GUI.Main;
 import javafx.*;
 import javafx.scene.control.Alert.AlertType;
@@ -25,8 +26,8 @@ public class Login extends Application {
     
     public static void main(String[] args) {
         //UNCOMMENT FOR PRODUCTION 
-        //Instance = new SQL();
-        //Instance.Setup();
+        Instance = new SQL();
+        Instance.Setup();
         launch(args);
     }
     
@@ -166,6 +167,7 @@ public class Login extends Application {
                     alert.setContentText("Logged In!");
                     alert.setHeaderText(null);
                     alert.showAndWait();
+                    User.setUsername(Username.getText());
                     Main.StartMainStage(primaryStage);
                 }else{
                     alert.setContentText("Logged Failed!");
@@ -188,7 +190,7 @@ public class Login extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
                 ///DEBUG
-        Main.StartMainStage(primaryStage);
+        //Main.StartMainStage(primaryStage);
         ///END DEBUG
     }
 }

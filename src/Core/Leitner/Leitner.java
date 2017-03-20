@@ -11,6 +11,7 @@ public class Leitner {
     public static Box CurrentBox;
     public static int BoxNumber;
     public static int CurrentQuestion;
+    public static ArrayList<Integer> Stack;
     
     public static ArrayList<Holder> CorrectQuestions;
     public static ArrayList<Holder> IncorrectQuestions;
@@ -22,9 +23,22 @@ public class Leitner {
         CurrentBox = GetNextBox(SelectBox());
     }
     
+    public void ResetForNextBox(){
+        CurrentQuestion = 0;
+        CorrectQuestions = new ArrayList<>();
+        IncorrectQuestions = new ArrayList<>();
+    }
+    
     public int IsNextQuestion(){
         if(CurrentBox.Questions.size() <= CurrentQuestion){
-         return -1;
+            //If the curretn Box has run out move onto the next one!
+            if(Stack.size() > 0){
+                FinishAndSave();
+                ResetForNextBox();
+                CurrentBox = GetNextBox(Stack);
+                return 1;
+            }
+            return -1;
         }
         else{ return 1;}
     }
@@ -33,18 +47,22 @@ public class Leitner {
         ArrayList<Integer> StackBoxes = new ArrayList<>();
         for(int I=0;I < SelectedDeck.Boxes.length;I++){
             long CurrentTime = System.currentTimeMillis() / 1000L;
-            if(CurrentTime >= SelectedDeck.Boxes[I].TimeToSee){
+            if(CurrentTime >= SelectedDeck.Boxes[I].TimeToSee && SelectedDeck.Boxes[I].Questions.size() > 0){
                 StackBoxes.add(I);
             }
         }
+        Stack = StackBoxes;
         return StackBoxes;
     }
     
     public Core.Leitner.Box GetNextBox(ArrayList<Integer> Stack){
         if(Stack.size() > 0){
-            CurrentQuestion = 0;
-            BoxNumber = Stack.get(0);
-            return SelectedDeck.Boxes[Stack.get(0)];
+            for(int X=0;X < Stack.size();X++){
+                CurrentQuestion = 0;
+                BoxNumber = Stack.get(X);
+                Stack.remove(X);
+                return SelectedDeck.Boxes[BoxNumber];
+            }
         }
         return null;
     }
